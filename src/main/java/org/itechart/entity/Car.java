@@ -1,14 +1,29 @@
 package org.itechart.entity;
 
+import java.sql.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Car {
     private int id;
+    private UUID uuid;
     private String make;
     private String model;
     private String bodyType;
     private String color;
-    private String productionDate;
+    private Date productionDate;
+
+    public Car() {
+    }
+
+    public Car(int id, String make, String model, String bodyType, String color, Date productionDate) {
+        this.id = id;
+        this.make = make;
+        this.model = model;
+        this.bodyType = bodyType;
+        this.color = color;
+        this.productionDate = productionDate;
+    }
 
     public int getId() {
         return id;
@@ -50,11 +65,11 @@ public class Car {
         this.color = color;
     }
 
-    public String getProductionDate() {
+    public Date getProductionDate() {
         return productionDate;
     }
 
-    public void setProductionDate(String productionDate) {
+    public void setProductionDate(Date productionDate) {
         this.productionDate = productionDate;
     }
 

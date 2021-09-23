@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.itechart.util.AbstractConnection.getConnection;
 
@@ -17,11 +18,12 @@ public class CarRepository implements ICarRepository{
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_ADD)) {
             stmt.setInt(1, car.getId());
-            stmt.setString(2, car.getMake());
-            stmt.setString(3, car.getModel());
-            stmt.setString(4, car.getBodyType());
-            stmt.setString(5, car.getColor());
-            stmt.setDate(6, car.getProductionDate());
+            stmt.setString(2, String.valueOf(car.getUuid()));
+            stmt.setString(3, car.getMake());
+            stmt.setString(4, car.getModel());
+            stmt.setString(5, car.getBodyType());
+            stmt.setString(6, car.getColor());
+            stmt.setDate(7, car.getProductionDate());
             if (stmt.executeUpdate() > 0) {
                 return true;
             }
@@ -60,7 +62,8 @@ public class CarRepository implements ICarRepository{
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_READ_ALL);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                Car car = new Car(rs.getInt("id"), rs.getString("make")
+                Car car = new Car(rs.getInt("id"), UUID.fromString(rs.getString("uuid"))
+                        , rs.getString("make")
                         , rs.getString("model")
                         , rs.getString("body_type"), rs.getString("color")
                         , rs.getDate("production_date"));
@@ -76,11 +79,12 @@ public class CarRepository implements ICarRepository{
     public boolean update(Car car, int id) {
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_UPDATE)) {
             stmt.setString(1, car.getMake());
-            stmt.setString(2, car.getModel());
-            stmt.setString(3, car.getBodyType());
-            stmt.setString(4, car.getColor());
-            stmt.setDate(5, car.getProductionDate());
-            stmt.setInt(6, id);
+            stmt.setString(2, String.valueOf(car.getUuid()));
+            stmt.setString(3, car.getModel());
+            stmt.setString(4, car.getBodyType());
+            stmt.setString(5, car.getColor());
+            stmt.setDate(6, car.getProductionDate());
+            stmt.setInt(7, id);
             stmt.execute();
             if (stmt.executeUpdate() > 0) {
                 return true;

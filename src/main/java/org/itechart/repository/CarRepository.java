@@ -17,13 +17,12 @@ public class CarRepository implements ICarRepository{
     public boolean add(Car car) {
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_ADD)) {
-            stmt.setInt(1, car.getId());
-            stmt.setObject(2, car.getUuid());
-            stmt.setString(3, car.getMake());
-            stmt.setString(4, car.getModel());
-            stmt.setString(5, car.getBodyType());
-            stmt.setString(6, car.getColor());
-            stmt.setDate(7, car.getProductionDate());
+            stmt.setObject(1, car.getUuid());
+            stmt.setString(2, car.getMake());
+            stmt.setString(3, car.getModel());
+            stmt.setString(4, car.getBodyType());
+            stmt.setString(5, car.getColor());
+            stmt.setDate(6, car.getProductionDate());
             if (stmt.executeUpdate() > 0) {
                 return true;
             }

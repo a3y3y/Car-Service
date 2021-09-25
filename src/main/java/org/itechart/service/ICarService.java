@@ -8,7 +8,7 @@ import java.util.List;
 public interface ICarService {
     boolean add(CarDto car);
 //    Car read(int id);
-//    List<Car> readAll();
+    List<CarDto> readAll();
 //    boolean update(Car car, int id);
 //    boolean delete(int id);
 }

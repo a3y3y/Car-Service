@@ -3,5 +3,5 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
          https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          metadata-complete="false">
-
+    <display-name>Car-Service</display-name>
 </web-app>

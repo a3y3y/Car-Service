@@ -18,7 +18,7 @@ public class CarRepository implements ICarRepository{
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_ADD)) {
             stmt.setInt(1, car.getId());
-            stmt.setString(2, String.valueOf(car.getUuid()));
+            stmt.setObject(2, car.getUuid());
             stmt.setString(3, car.getMake());
             stmt.setString(4, car.getModel());
             stmt.setString(5, car.getBodyType());

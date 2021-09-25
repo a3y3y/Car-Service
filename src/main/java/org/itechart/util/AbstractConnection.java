@@ -1,7 +1,9 @@
 package org.itechart.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,8 +15,10 @@ public abstract class AbstractConnection {
 
     public static Connection getConnection() throws SQLException {
         Properties props = new Properties();
-        try {
-            props.load(new FileInputStream("application.properties"));
+        String resourceName = "application.properties";
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try(InputStream resourceStream = loader.getResourceAsStream(resourceName)){
+            props.load(resourceStream);
 
             String url = props.getProperty("url");
             String username = props.getProperty("username");

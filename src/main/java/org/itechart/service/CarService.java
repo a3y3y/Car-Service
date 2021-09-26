@@ -8,6 +8,7 @@ import org.itechart.repository.ICarRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class CarService implements ICarService {
@@ -29,5 +30,27 @@ public class CarService implements ICarService {
             carDtos.add(carDto);
         }
         return carDtos;
+    }
+
+    @Override
+    public boolean update(CarDto carDto) {
+        Car carOld = carRepository.read(carDto.getUuid());
+        Car carNew = CarMapper.INSTANCE.toEntity(carDto);
+        if(carNew.getMake() == null){
+            carNew.setMake(carOld.getMake());
+        }
+        if(carNew.getModel() == null){
+            carNew.setModel(carOld.getModel());
+        }
+        if(carNew.getBodyType() == null){
+            carNew.setBodyType(carOld.getBodyType());
+        }
+        if(carNew.getColor() == null){
+            carNew.setColor(carOld.getColor());
+        }
+        if(carNew.getProductionDate() == null){
+            carNew.setProductionDate(carOld.getProductionDate());
+        }
+        return carRepository.update(carNew);
     }
 }

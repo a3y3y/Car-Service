@@ -42,7 +42,9 @@ public class CarServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+        String jsonCar = req.getReader().lines().collect(Collectors.joining());
+        CarDto car = (CarDto) jsonConverter.toObject(jsonCar, CarDto.class);
+        carService.update(car);
     }
 
     @Override

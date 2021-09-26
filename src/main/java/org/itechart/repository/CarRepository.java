@@ -34,11 +34,11 @@ public class CarRepository implements ICarRepository{
     }
 
     @Override
-    public Car read(int id) {
+    public Car read(UUID uuid) {
         Car car = new Car();
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_READ)) {
-            stmt.setInt(1, id);
+            stmt.setObject(1,uuid);
             stmt.execute();
             ResultSet rs = stmt.getResultSet();
             rs.next();
@@ -75,15 +75,14 @@ public class CarRepository implements ICarRepository{
     }
 
     @Override
-    public boolean update(Car car, int id) {
+    public boolean update(Car car) {
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_UPDATE)) {
             stmt.setString(1, car.getMake());
-            stmt.setString(2, String.valueOf(car.getUuid()));
-            stmt.setString(3, car.getModel());
-            stmt.setString(4, car.getBodyType());
-            stmt.setString(5, car.getColor());
-            stmt.setDate(6, car.getProductionDate());
-            stmt.setInt(7, id);
+            stmt.setString(2, car.getModel());
+            stmt.setString(3, car.getBodyType());
+            stmt.setString(4, car.getColor());
+            stmt.setDate(5, car.getProductionDate());
+            stmt.setObject(6, car.getUuid());
             stmt.execute();
             if (stmt.executeUpdate() > 0) {
                 return true;

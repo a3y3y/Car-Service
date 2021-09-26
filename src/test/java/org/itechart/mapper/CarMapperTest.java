@@ -14,6 +14,8 @@ class CarMapperTest {
 
     CarDto carDto = new CarDto(UUID.fromString("13984f06-ce0a-46f4-94f0-fdb377095104"), "VW",
             "Beetle", "Hatchback", "Green", new Date(2020-06-20));
+    Car car = new Car(1, UUID.fromString("13984f06-ce0a-46f4-94f0-fdb377095104"), "VW",
+            "Beetle", "Hatchback", "Green", new Date(2020-06-20));
     CarMapper carMapper = CarMapper.INSTANCE;
 
     @Test
@@ -27,5 +29,18 @@ class CarMapperTest {
         assertEquals(carDto.getBodyType(), car.getBodyType());
         assertEquals(carDto.getColor(), car.getColor());
         assertEquals(carDto.getProductionDate(), car.getProductionDate());
+    }
+
+    @Test
+    void toDto() {
+        CarDto carDto = carMapper.toDto(car);
+
+        assertNotNull(carDto);
+        assertEquals(car.getUuid(), carDto.getUuid());
+        assertEquals(car.getMake(), carDto.getMake());
+        assertEquals(car.getModel(), carDto.getModel());
+        assertEquals(car.getBodyType(), carDto.getBodyType());
+        assertEquals(car.getColor(), carDto.getColor());
+        assertEquals(car.getProductionDate(), carDto.getProductionDate());
     }
 }

@@ -15,6 +15,7 @@ import org.itechart.util.JsonConverter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "CarServlet", urlPatterns = "/car")
@@ -49,6 +50,8 @@ public class CarServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        String jsonCar = req.getReader().lines().collect(Collectors.joining());
+        CarDto car = (CarDto) jsonConverter.toObject(jsonCar, CarDto.class);
+        carService.delete(car.getUuid());
     }
 }

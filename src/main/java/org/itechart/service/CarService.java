@@ -53,4 +53,9 @@ public class CarService implements ICarService {
         }
         return carRepository.update(carNew);
     }
+
+    @Override
+    public boolean delete(UUID uuid) {
+        return carRepository.delete(uuid);
+    }
 }

@@ -7,5 +7,5 @@ public class Constant {
             " production_date) VALUES (?,?,?,?,?,?)";
     public static final String CAR_UPDATE = "UPDATE data.cars SET make=?, model=?, body_type=?," +
             " color=?, production_date=? WHERE uuid=?";
-    public static final String CAR_DELETE = "DELETE FROM data.cars WHERE id=?";
+    public static final String CAR_DELETE = "DELETE FROM data.cars WHERE uuid=?";
 }

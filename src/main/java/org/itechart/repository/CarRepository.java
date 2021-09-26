@@ -95,9 +95,9 @@ public class CarRepository implements ICarRepository{
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(UUID uuid) {
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_DELETE)) {
-            stmt.setInt(1, id);
+            stmt.setObject(1, uuid);
             if (stmt.executeUpdate() > 0) {
                 return true;
             }

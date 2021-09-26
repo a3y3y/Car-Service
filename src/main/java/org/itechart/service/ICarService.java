@@ -11,5 +11,5 @@ public interface ICarService {
 //    Car read(int id);
     List<CarDto> readAll();
     boolean update(CarDto car);
-//    boolean delete(int id);
+    boolean delete(UUID uuid);
 }

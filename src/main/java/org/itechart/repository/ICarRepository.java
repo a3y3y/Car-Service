@@ -10,5 +10,5 @@ public interface ICarRepository {
     Car read(UUID uuid);
     List<Car> readAll();
     boolean update(Car car);
-    boolean delete(int id);
+    boolean delete(UUID uuid);
 }

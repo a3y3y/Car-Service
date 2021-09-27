@@ -10,4 +10,5 @@ public class Client {
     private UUID uuid;
     private String login;
     private String password;
+    private String salt;
 }

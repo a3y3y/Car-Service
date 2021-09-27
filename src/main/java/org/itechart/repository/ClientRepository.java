@@ -6,7 +6,6 @@ import org.itechart.entity.Client;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 import static org.itechart.util.AbstractConnection.getConnection;
@@ -20,6 +19,7 @@ public class ClientRepository implements IClientRepository{
             stmt.setObject(1, client.getUuid());
             stmt.setString(2, client.getLogin());
             stmt.setString(3, client.getPassword());
+            stmt.setString(4, client.getSalt());
             if (stmt.executeUpdate() > 0) {
                 return true;
             }
@@ -31,17 +31,18 @@ public class ClientRepository implements IClientRepository{
     }
 
     @Override
-    public Client read(String login, String password) {
+    public Client read(String login) {
         Client client = new Client();
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CLIENT_READ)) {
             stmt.setString(1, login);
-            stmt.setString(2, password);
             stmt.execute();
             ResultSet rs = stmt.getResultSet();
             rs.next();
             client.setUuid((UUID) rs.getObject("uuid"));
             client.setLogin(rs.getString("login"));
+            client.setPassword(rs.getString("password"));
+            client.setSalt(rs.getString("salt"));
             rs.close();
         } catch (SQLException e) {
             e.getMessage();
@@ -50,7 +51,23 @@ public class ClientRepository implements IClientRepository{
     }
 
     @Override
-    public List<Client> readAll() {
-        return null;
+    public boolean isLoginExist(String login) {
+        try (PreparedStatement stmt = getConnection()
+                .prepareStatement(Constant.CLIENT_CHECK_LOGIN)) {
+            stmt.setString(1, login);
+            stmt.execute();
+            ResultSet rs = stmt.getResultSet();
+            rs.next();
+            if(rs.getInt("rowCount") == 1){
+                rs.close();
+                return true;
+            }
+            rs.close();
+            return false;
+        } catch (SQLException e) {
+            e.getMessage();
+        }
+        return false;
     }
+
 }

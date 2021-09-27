@@ -9,7 +9,8 @@ public class Constant {
             " color=?, production_date=? WHERE uuid=?";
     public static final String CAR_DELETE = "DELETE FROM data.cars WHERE uuid=?";
 
-    public static final String CLIENT_ADD = "INSERT INTO data.clients (uuid, login, password)" +
-            " VALUES (?,?,?)";
-    public static final String CLIENT_READ = "SELECT * FROM data.clients WHERE login=? AND password=?";
+    public static final String CLIENT_ADD = "INSERT INTO data.clients (uuid, login, password, salt)" +
+            " VALUES (?,?,?,?)";
+    public static final String CLIENT_READ = "SELECT * FROM data.clients WHERE login=?";
+    public static final String CLIENT_CHECK_LOGIN = "SELECT COUNT(*) as rowCount FROM data.clients WHERE login=?";
 }

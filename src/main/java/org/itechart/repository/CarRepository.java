@@ -48,6 +48,7 @@ public class CarRepository implements ICarRepository{
             car.setBodyType(rs.getString("body_type"));
             car.setColor(rs.getString("color"));
             car.setProductionDate(rs.getDate("production_date"));
+            car.setUuid(UUID.fromString(rs.getString("uuid")));
             rs.close();
         } catch (SQLException e) {
             e.getMessage();
@@ -83,7 +84,6 @@ public class CarRepository implements ICarRepository{
             stmt.setString(4, car.getColor());
             stmt.setDate(5, car.getProductionDate());
             stmt.setObject(6, car.getUuid());
-            stmt.execute();
             if (stmt.executeUpdate() > 0) {
                 return true;
             }

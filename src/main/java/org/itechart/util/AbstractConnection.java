@@ -24,7 +24,7 @@ public abstract class AbstractConnection {
             String username = props.getProperty("username");
             String password = props.getProperty("password");
 
-            Class.forName("org.postgresql.Driver");
+            Class.forName(props.getProperty("driverClassName"));
             if (connection == null) {
                 connection = DriverManager.getConnection(url, username, password);
             }

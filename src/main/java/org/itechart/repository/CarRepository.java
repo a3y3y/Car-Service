@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.itechart.util.AbstractConnection.getConnection;
+import static org.itechart.util.Log.logger;
 
 public class CarRepository implements ICarRepository{
+
     @Override
-    public boolean add(Car car) {
+    public Car add(Car car) throws SQLException {
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_ADD)) {
             stmt.setObject(1, car.getUuid());
@@ -23,18 +25,18 @@ public class CarRepository implements ICarRepository{
             stmt.setString(4, car.getBodyType());
             stmt.setString(5, car.getColor());
             stmt.setDate(6, car.getProductionDate());
-            if (stmt.executeUpdate() > 0) {
-                return true;
-            }
+            stmt.execute();
+
+            //Нужно ли обращатьс к базе для получения сохраненного объекта?
         } catch (SQLException e){
-            e.getMessage();
-            return false;
+            logger.warn(e.getMessage());
+            throw new SQLException("There is an error in database, this car hasn't been saved. Try again later.");
         }
-        return false;
+        return car;
     }
 
     @Override
-    public Car read(UUID uuid) {
+    public Car read(UUID uuid) throws SQLException {
         Car car = new Car();
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CAR_READ)) {
@@ -51,13 +53,14 @@ public class CarRepository implements ICarRepository{
             car.setUuid(UUID.fromString(rs.getString("uuid")));
             rs.close();
         } catch (SQLException e) {
-            e.getMessage();
+            logger.warn(e.getMessage());
+            throw new SQLException("There is an error in database. Try again later.");
         }
         return car;
     }
 
     @Override
-    public List<Car> readAll() {
+    public List<Car> readAll() throws SQLException{
         List<Car> list = new ArrayList<>();
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_READ_ALL);
              ResultSet rs = stmt.executeQuery()) {
@@ -70,13 +73,14 @@ public class CarRepository implements ICarRepository{
                 list.add(car);
             }
         } catch (SQLException e) {
-            e.getMessage();
+            logger.warn(e.getMessage());
+            throw new SQLException("There is an error in database. Try again later.");
         }
         return list;
     }
 
     @Override
-    public boolean update(Car car) {
+    public Car update(Car car) throws SQLException{
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_UPDATE)) {
             stmt.setString(1, car.getMake());
             stmt.setString(2, car.getModel());
@@ -84,26 +88,24 @@ public class CarRepository implements ICarRepository{
             stmt.setString(4, car.getColor());
             stmt.setDate(5, car.getProductionDate());
             stmt.setObject(6, car.getUuid());
-            if (stmt.executeUpdate() > 0) {
-                return true;
-            }
-        } catch (SQLException | NumberFormatException e) {
-            e.getMessage();
-            return false;
+            stmt.execute();
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            throw new SQLException("There is an error in database, this car hasn't been updated. Try again later.");
         }
-        return false;
+        return car;
     }
 
     @Override
-    public boolean delete(UUID uuid) {
+    public boolean delete(UUID uuid) throws SQLException{
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_DELETE)) {
             stmt.setObject(1, uuid);
             if (stmt.executeUpdate() > 0) {
                 return true;
             }
         } catch (SQLException e) {
-            e.getMessage();
-            return false;
+            logger.warn(e.getMessage());
+            throw new SQLException("There is an error in database, this car hasn't been deleted. Try again later.");
         }
         return false;
     }

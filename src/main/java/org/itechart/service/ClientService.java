@@ -9,10 +9,15 @@ import org.itechart.util.PasswordEncryptor;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 public class ClientService implements IClientService {
 
     private ClientRepository clientRepository;
+
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
 
     @Override
     public boolean register(ClientDto clientDto) {
@@ -25,6 +30,7 @@ public class ClientService implements IClientService {
                 String saltString = PasswordEncryptor.getStringFromByte(salt);
                 client.setPassword(encPasswordString);
                 client.setSalt(saltString);
+                client.setUuid(UUID.randomUUID());
                 return clientRepository.add(client);
             } catch (InvalidKeySpecException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
                 e.getMessage();

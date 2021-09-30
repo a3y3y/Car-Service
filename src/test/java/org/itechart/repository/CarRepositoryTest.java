@@ -4,6 +4,7 @@ import org.itechart.entity.Car;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CarRepositoryTest {
 
-    CarRepository carRepository = new CarRepository();
+    static CarRepository carRepository = new CarRepository();
 
     UUID uuid = UUID.fromString("bb16f9a1-879c-4f94-a065-b44c98bc0654");
     UUID uuid1 = UUID.fromString("f6cc333c-4916-4504-8120-97f0dbb002ae");
@@ -23,23 +24,27 @@ class CarRepositoryTest {
             "Hatchback", "Green", Date.valueOf("2019-09-10"));
 
     @Test
-    void addTest() {
+    void addTest() throws SQLException {
         carRepository.add(car);
         carRepository.add(car1);
+        Car testCar = carRepository.read(car.getUuid());
+
+        assertEquals(car, testCar);
     }
 
     @Test
-    void readTest() {
+    void readTest() throws SQLException {
         Car testCar = carRepository.read(uuid);
 
         assertEquals(car, testCar);
     }
 
     @Test
-    void readAllTest() {
+    void readAll() throws SQLException {
         List<Car> cars = new ArrayList<>();
-        cars.add(car);
         cars.add(car1);
+        car.setColor("Black");
+        cars.add(car);
 
         List<Car> carsTest = carRepository.readAll();
 
@@ -47,7 +52,7 @@ class CarRepositoryTest {
     }
 
     @Test
-    void updateTest() {
+    void updateTest() throws SQLException {
         car.setColor("Black");
         carRepository.update(car);
         UUID uuid = car.getUuid();
@@ -57,13 +62,13 @@ class CarRepositoryTest {
     }
 
     @Test
-    void deleteTest() {
+    void deleteTest() throws SQLException {
         Car carTest = carRepository.read(car.getUuid());
         boolean isDeleted = carRepository.delete(car.getUuid());
-        Car deletedCar = carRepository.read(car.getUuid());
-
+        Exception exception = assertThrows(SQLException.class, () -> {
+            carRepository.read(car.getUuid());
+        });
         assertNotNull(carTest);
         assertTrue(isDeleted);
-        assertNull(deletedCar.getUuid());
     }
 }

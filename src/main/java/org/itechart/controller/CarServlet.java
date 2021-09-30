@@ -6,8 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.itechart.dto.CarDto;
-import org.itechart.entity.Car;
 import org.itechart.repository.CarRepository;
 import org.itechart.service.CarService;
 import org.itechart.util.JsonConverter;
@@ -18,40 +18,58 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+//    Как правильно обрабатвать исключения в контроллере?
+//    Что делать с объектом полученным из сервиса в методах post, put?
+
 @WebServlet(name = "CarServlet", urlPatterns = "/car")
 public class CarServlet extends HttpServlet {
 
     private CarService carService = new CarService(new CarRepository());
     private JsonConverter jsonConverter = new JsonConverter();
 
+    @SneakyThrows
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<CarDto> cars = carService.readAll();
-        jsonConverter.toJson(cars);
-        PrintWriter pw = resp.getWriter();
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        pw.print(cars);
+        String reqParam = req.getQueryString();
+        if (reqParam == null) {
+            List<CarDto> cars = carService.readAll();
+            String jsonCars = jsonConverter.toJson(cars);
+            sendJson(resp, jsonCars);
+        } else {
+            UUID uuid = UUID.fromString(req.getParameter("uuid"));
+            String jsonCar = jsonConverter.toJson(carService.read(uuid));
+            sendJson(resp, jsonCar);
+        }
     }
 
+    @SneakyThrows
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jsonCar = req.getReader().lines().collect(Collectors.joining());
-        CarDto car = (CarDto) jsonConverter.toObject(jsonCar, CarDto.class);
+        CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
         carService.add(car);
     }
 
+    @SneakyThrows
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jsonCar = req.getReader().lines().collect(Collectors.joining());
-        CarDto car = (CarDto) jsonConverter.toObject(jsonCar, CarDto.class);
+        CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
         carService.update(car);
     }
 
+    @SneakyThrows
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jsonCar = req.getReader().lines().collect(Collectors.joining());
-        CarDto car = (CarDto) jsonConverter.toObject(jsonCar, CarDto.class);
+        CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
         carService.delete(car.getUuid());
+    }
+
+    private void sendJson(HttpServletResponse resp, String jsonString) throws IOException {
+        PrintWriter pw = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        pw.print(jsonString);
     }
 }

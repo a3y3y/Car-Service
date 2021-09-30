@@ -1,13 +1,13 @@
 package org.itechart.util;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import static org.itechart.util.Log.logger;
 
 public abstract class AbstractConnection {
 
@@ -31,7 +31,7 @@ public abstract class AbstractConnection {
         } catch (ClassNotFoundException | SQLException e) {
             throw new SQLException(e);
         } catch (IOException e) {
-            e.getMessage();
+            logger.warn(e.getMessage());
         }
         return connection;
     }

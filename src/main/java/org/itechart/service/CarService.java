@@ -1,41 +1,57 @@
 package org.itechart.service;
 
-import lombok.AllArgsConstructor;
 import org.itechart.dto.CarDto;
 import org.itechart.entity.Car;
 import org.itechart.mapper.CarMapper;
 import org.itechart.repository.ICarRepository;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
+
 public class CarService implements ICarService {
 
     private ICarRepository carRepository;
+    private CarMapper carMapper = CarMapper.INSTANCE;
 
-    @Override
-    public boolean add(CarDto car) {
-        Car car1 = CarMapper.INSTANCE.toEntity(car);
-        return carRepository.add(car1);
+    public CarService(ICarRepository carRepository) {
+        this.carRepository = carRepository;
     }
 
     @Override
-    public List<CarDto> readAll() {
+    public CarDto add(CarDto carDto) throws SQLException {
+        carDto.setUuid(UUID.randomUUID());
+        Car car = carMapper.toEntity(carDto);
+        return carMapper.toDto(carRepository.add(car));
+    }
+
+    @Override
+    public CarDto read(UUID uuid) throws SQLException {
+        return carMapper.toDto(carRepository.read(uuid));
+    }
+
+    @Override
+    public List<CarDto> readAll() throws SQLException {
         List<Car> cars = carRepository.readAll();
-        List<CarDto> carDtos = new ArrayList<>();
-        for (Car car : cars) {
-            CarDto carDto = CarMapper.INSTANCE.toDto(car);
-            carDtos.add(carDto);
-        }
-        return carDtos;
+        return cars.stream().map(n -> carMapper.toDto(n)).collect(Collectors.toList());
     }
 
     @Override
-    public boolean update(CarDto carDto) {
+    public CarDto update(CarDto carDto) throws SQLException {
         Car carOld = carRepository.read(carDto.getUuid());
-        Car carNew = CarMapper.INSTANCE.toEntity(carDto);
+        Car carNew = carMapper.toEntity(carDto);
+        updateValues(carOld, carNew);
+        return carMapper.toDto(carRepository.update(carNew));
+    }
+
+    @Override
+    public boolean delete(UUID uuid) throws SQLException {
+        return carRepository.delete(uuid);
+    }
+
+    private void updateValues(Car carOld, Car carNew){
         if(carNew.getMake() == null){
             carNew.setMake(carOld.getMake());
         }
@@ -51,11 +67,5 @@ public class CarService implements ICarService {
         if(carNew.getProductionDate() == null){
             carNew.setProductionDate(carOld.getProductionDate());
         }
-        return carRepository.update(carNew);
-    }
-
-    @Override
-    public boolean delete(UUID uuid) {
-        return carRepository.delete(uuid);
     }
 }

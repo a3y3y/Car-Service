@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-//    Как правильно обрабатвать исключения в контроллере?
-//    Что делать с объектом полученным из сервиса в методах post, put?
+//    Как правильно обрабатывать исключения в контроллере?
 
 @WebServlet(name = "CarServlet", urlPatterns = "/car")
 public class CarServlet extends HttpServlet {
@@ -47,7 +46,8 @@ public class CarServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jsonCar = req.getReader().lines().collect(Collectors.joining());
         CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
-        carService.add(car);
+        String carJson = jsonConverter.toJson(carService.add(car));
+        sendJson(resp, carJson);
     }
 
     @SneakyThrows
@@ -55,15 +55,15 @@ public class CarServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String jsonCar = req.getReader().lines().collect(Collectors.joining());
         CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
-        carService.update(car);
+        String carJson = jsonConverter.toJson(carService.update(car));
+        sendJson(resp, carJson);
     }
 
     @SneakyThrows
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String jsonCar = req.getReader().lines().collect(Collectors.joining());
-        CarDto car = jsonConverter.toObject(jsonCar, CarDto.class);
-        carService.delete(car.getUuid());
+        UUID uuid = UUID.fromString(req.getParameter("uuid"));
+        carService.delete(uuid);
     }
 
     private void sendJson(HttpServletResponse resp, String jsonString) throws IOException {

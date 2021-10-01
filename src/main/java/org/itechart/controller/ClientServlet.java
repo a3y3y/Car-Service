@@ -5,13 +5,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.itechart.dto.CarDto;
 import org.itechart.dto.ClientDto;
 import org.itechart.repository.ClientRepository;
 import org.itechart.service.ClientService;
 import org.itechart.util.JsonConverter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "ClientServlet", urlPatterns = "/client")
@@ -24,7 +24,9 @@ public class ClientServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        String login = req.getParameter("login");
+        String jsonClient = jsonConverter.toJson(clientService.read(login));
+        sendJson(resp, jsonClient);
     }
 
     @Override
@@ -32,5 +34,12 @@ public class ClientServlet extends HttpServlet {
         String jsonClient = req.getReader().lines().collect(Collectors.joining());
         ClientDto clientDto = jsonConverter.toObject(jsonClient, ClientDto.class);
         clientService.register(clientDto);
+    }
+
+    private void sendJson(HttpServletResponse resp, String jsonString) throws IOException {
+        PrintWriter pw = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        pw.print(jsonString);
     }
 }

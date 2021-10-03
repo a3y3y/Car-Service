@@ -30,7 +30,7 @@ public class CarRepository implements ICarRepository{
             //Нужно ли обращатьс к базе для получения сохраненного объекта?
         } catch (SQLException e){
             logger.warn(e.getMessage());
-            throw new SQLException("There is an error in database, this car hasn't been saved. Try again later.");
+            throw new SQLException(e);
         }
         return car;
     }
@@ -54,7 +54,7 @@ public class CarRepository implements ICarRepository{
             rs.close();
         } catch (SQLException e) {
             logger.warn(e.getMessage());
-            throw new SQLException("There is an error in database. Try again later.");
+            throw new SQLException(e);
         }
         return car;
     }
@@ -74,7 +74,7 @@ public class CarRepository implements ICarRepository{
             }
         } catch (SQLException e) {
             logger.warn(e.getMessage());
-            throw new SQLException("There is an error in database. Try again later.");
+            throw new SQLException(e);
         }
         return list;
     }
@@ -91,7 +91,7 @@ public class CarRepository implements ICarRepository{
             stmt.execute();
         } catch (SQLException e) {
             logger.warn(e.getMessage());
-            throw new SQLException("There is an error in database, this car hasn't been updated. Try again later.");
+            throw new SQLException(e);
         }
         return car;
     }
@@ -105,7 +105,7 @@ public class CarRepository implements ICarRepository{
             }
         } catch (SQLException e) {
             logger.warn(e.getMessage());
-            throw new SQLException("There is an error in database, this car hasn't been deleted. Try again later.");
+            throw new SQLException(e);
         }
         return false;
     }

@@ -61,14 +61,14 @@ class CarServletTest{
 
     @Test
     void doGet() throws ServletException, IOException {
-        when(req.getQueryString()).thenReturn("bb16f9a1-879c-4f94-a065-b44c98bc0654");
-        when(req.getParameter("uuid")).thenReturn("bb16f9a1-879c-4f94-a065-b44c98bc0654");
+        when(req.getRequestURI()).thenReturn("/car-service/cars/bb16f9a1-879c-4f94-a065-b44c98bc0654");
+        when(req.getContextPath()).thenReturn("/car-service");
         when(resp.getWriter()).thenReturn(pw);
 
         carServlet.doGet(req, resp);
 
-        verify(req, atLeast(1)).getQueryString();
-        verify(req, atLeast(1)).getParameter("uuid");
+        verify(req, atLeast(1)).getRequestURI();
+        verify(req, atLeast(1)).getContextPath();
         assertTrue(sw.toString().contains("bb16f9a1-879c-4f94-a065-b44c98bc0654"));
     }
 
@@ -98,10 +98,12 @@ class CarServletTest{
 
     @Test
     void doDelete() throws ServletException, IOException {
-        when(req.getParameter("uuid")).thenReturn("bb16f9a1-879c-4f94-a065-b44c98bc0654");
+        when(req.getRequestURI()).thenReturn("/car-service/cars/bb16f9a1-879c-4f94-a065-b44c98bc0654");
+        when(req.getContextPath()).thenReturn("/car-service");
 
         carServlet.doDelete(req, resp);
 
-        verify(req, atLeast(1)).getParameter("uuid");
+        verify(req, atLeast(1)).getRequestURI();
+        verify(req, atLeast(1)).getContextPath();
     }
 }

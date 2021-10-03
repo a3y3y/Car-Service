@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 //    Как правильно обрабатывать исключения в контроллере?
 
-@WebServlet(name = "CarServlet", urlPatterns = "/car")
+@WebServlet(name = "CarServlet", urlPatterns = "/cars/*")
 public class CarServlet extends HttpServlet {
 
     private CarService carService = new CarService(new CarRepository());
@@ -30,13 +30,13 @@ public class CarServlet extends HttpServlet {
     @SneakyThrows
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String reqParam = req.getQueryString();
-        if (reqParam == null) {
+        String uuidString = req.getRequestURI().replace(req.getContextPath() + "/cars", "");
+        if (uuidString.equals("")) {
             List<CarDto> cars = carService.readAll();
             String jsonCars = jsonConverter.toJson(cars);
             sendJson(resp, jsonCars);
         } else {
-            UUID uuid = UUID.fromString(req.getParameter("uuid"));
+            UUID uuid = UUID.fromString(uuidString.substring(1));
             String jsonCar = jsonConverter.toJson(carService.read(uuid));
             sendJson(resp, jsonCar);
         }
@@ -63,7 +63,8 @@ public class CarServlet extends HttpServlet {
     @SneakyThrows
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        UUID uuid = UUID.fromString(req.getParameter("uuid"));
+        UUID uuid = UUID.fromString(req.getRequestURI()
+                .replace(req.getContextPath() + "/cars", "").substring(1));
         carService.delete(uuid);
     }
 

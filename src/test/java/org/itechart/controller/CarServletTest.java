@@ -1,10 +1,11 @@
 package org.itechart.controller;
 
-import jakarta.servlet.ServletException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.itechart.dto.CarDto;
 import org.itechart.entity.Car;
+import org.itechart.exception.CarServiceServletException;
 import org.itechart.repository.CarRepository;
 import org.itechart.util.JsonConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class CarServletTest{
     }
 
     @Test
-    void doGet() throws ServletException, IOException {
+    void doGet() throws CarServiceServletException, IOException {
         when(req.getRequestURI()).thenReturn("/car-service/cars/bb16f9a1-879c-4f94-a065-b44c98bc0654");
         when(req.getContextPath()).thenReturn("/car-service");
         when(resp.getWriter()).thenReturn(pw);
@@ -73,7 +74,7 @@ class CarServletTest{
     }
 
     @Test
-    void doPost() throws IOException, ServletException {
+    void doPost() throws IOException, CarServiceServletException {
         String json = jsonConverter.toJson(carDto);
         when(req.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
         when(resp.getWriter()).thenReturn(pw);
@@ -85,7 +86,7 @@ class CarServletTest{
     }
 
     @Test
-    void doPut() throws IOException, ServletException {
+    void doPut() throws IOException, CarServiceServletException {
         String json = jsonConverter.toJson(carDto);
         when(req.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
         when(resp.getWriter()).thenReturn(pw);
@@ -97,7 +98,7 @@ class CarServletTest{
     }
 
     @Test
-    void doDelete() throws ServletException, IOException {
+    void doDelete() throws CarServiceServletException, IOException {
         when(req.getRequestURI()).thenReturn("/car-service/cars/bb16f9a1-879c-4f94-a065-b44c98bc0654");
         when(req.getContextPath()).thenReturn("/car-service");
 

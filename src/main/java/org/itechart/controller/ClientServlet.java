@@ -1,11 +1,11 @@
 package org.itechart.controller;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.itechart.dto.ClientDto;
+import org.itechart.exception.CarServiceServletException;
 import org.itechart.repository.ClientRepository;
 import org.itechart.service.ClientService;
 import org.itechart.util.JsonConverter;
@@ -28,27 +28,28 @@ public class ClientServlet extends HttpServlet {
 
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CarServiceServletException {
         String login = req.getParameter("login");
         String jsonClient = null;
         try {
             jsonClient = jsonConverter.toJson(clientService.read(login));
         } catch (SQLException e) {
             logger.error(e.getMessage());
-            throw new ServletException("There is no user with such login.");
+            throw new CarServiceServletException("There is no user with such login.");
         }
         sendJson(resp, jsonClient);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws CarServiceServletException, IOException {
         String jsonClient = req.getReader().lines().collect(Collectors.joining());
         ClientDto clientDto = jsonConverter.toObject(jsonClient, ClientDto.class);
         try {
             clientService.register(clientDto);
+            logger.info("Client with login: " + clientDto.getLogin() + " has been registered");
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException e) {
             logger.error(e.getMessage());
-            throw new ServletException("Internal error. Try again later");
+            throw new CarServiceServletException("Internal error. Try again later");
         }
         resp.sendRedirect(req.getContextPath() + "/authenticate");
     }

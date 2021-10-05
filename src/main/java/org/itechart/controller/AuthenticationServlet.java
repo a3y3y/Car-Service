@@ -1,8 +1,8 @@
 package org.itechart.controller;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.itechart.exception.CarServiceServletException;
 import org.itechart.repository.ClientRepository;
 import org.itechart.service.ClientService;
 
@@ -21,14 +21,14 @@ public class AuthenticationServlet extends HttpServlet {
     ClientService clientService = new ClientService(new ClientRepository());
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter pw = resp.getWriter();
         resp.setCharacterEncoding("UTF-8");
         pw.print("Authentication Page");
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws CarServiceServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         try {
@@ -42,7 +42,7 @@ public class AuthenticationServlet extends HttpServlet {
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException e) {
             logger.error(e.getMessage());
-            throw new ServletException("Internal server error. Try again later");
+            throw new CarServiceServletException("Internal server error. Try again later");
         }
     }
 }

@@ -28,10 +28,12 @@ public class CarFilter implements Filter {
                 if(tokenValue.equals(session.getAttribute("token"))) {
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
-                    httpResponse.sendRedirect(httpRequest.getContextPath() + "/authenticate");
+                    httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                            "You are not authorized to access this page");
                 }
             } else {
-                httpResponse.sendRedirect(httpRequest.getContextPath() + "/authenticate");
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        "You are not authorized to access this page");
             }
         } else filterChain.doFilter(servletRequest, servletResponse);
 

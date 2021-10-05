@@ -26,8 +26,7 @@ public class CarRepository implements ICarRepository{
             stmt.setString(5, car.getColor());
             stmt.setDate(6, car.getProductionDate());
             stmt.execute();
-
-            //Нужно ли обращатьс к базе для получения сохраненного объекта?
+            logger.info(car + " has been added to database");
         } catch (SQLException e){
             logger.error(e.getMessage());
             throw e;
@@ -89,6 +88,7 @@ public class CarRepository implements ICarRepository{
             stmt.setDate(5, car.getProductionDate());
             stmt.setObject(6, car.getUuid());
             stmt.execute();
+            logger.info(car + " has been updated");
         } catch (SQLException e) {
             logger.error(e.getMessage());
             throw e;
@@ -101,6 +101,7 @@ public class CarRepository implements ICarRepository{
         try (PreparedStatement stmt = getConnection().prepareStatement(Constant.CAR_DELETE)) {
             stmt.setObject(1, uuid);
             if (stmt.executeUpdate() > 0) {
+                logger.info("Car with uuid: " + uuid + " has been deleted");
                 return true;
             }
         } catch (SQLException e) {

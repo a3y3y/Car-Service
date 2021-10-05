@@ -9,11 +9,12 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.itechart.util.AbstractConnection.getConnection;
+import static org.itechart.util.Log.logger;
 
 public class ClientRepository implements IClientRepository{
 
     @Override
-    public boolean add(Client client) {
+    public boolean add(Client client) throws SQLException {
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CLIENT_ADD)) {
             stmt.setObject(1, client.getUuid());
@@ -24,14 +25,14 @@ public class ClientRepository implements IClientRepository{
                 return true;
             }
         } catch (SQLException e){
-            e.getMessage();
-            return false;
+            logger.error(e.getMessage());
+            throw e;
         }
         return false;
     }
 
     @Override
-    public Client read(String login) {
+    public Client read(String login) throws SQLException {
         Client client = new Client();
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CLIENT_READ)) {
@@ -45,13 +46,14 @@ public class ClientRepository implements IClientRepository{
             client.setSalt(rs.getString("salt"));
             rs.close();
         } catch (SQLException e) {
-            e.getMessage();
+            logger.error(e.getMessage());
+            throw e;
         }
         return client;
     }
 
     @Override
-    public boolean isLoginExist(String login) {
+    public boolean isLoginExist(String login) throws SQLException {
         try (PreparedStatement stmt = getConnection()
                 .prepareStatement(Constant.CLIENT_CHECK_LOGIN)) {
             stmt.setString(1, login);
@@ -65,9 +67,9 @@ public class ClientRepository implements IClientRepository{
             rs.close();
             return false;
         } catch (SQLException e) {
-            e.getMessage();
+            logger.error(e.getMessage());
+            throw e;
         }
-        return false;
     }
 
 }

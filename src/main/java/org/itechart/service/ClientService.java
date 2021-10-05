@@ -9,6 +9,7 @@ import org.itechart.util.PasswordEncryptor;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class ClientService implements IClientService {
@@ -20,27 +21,24 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public boolean register(ClientDto clientDto) {
+    public boolean register(ClientDto clientDto) throws NoSuchAlgorithmException, InvalidKeySpecException,
+            UnsupportedEncodingException, SQLException {
         Client client = ClientMapper.INSTANCE.toEntity(clientDto);
         if (!clientRepository.isLoginExist(client.getLogin())) {
-            try {
-                byte[] salt = PasswordEncryptor.generateSalt();
-                byte[] encryptedPassword = PasswordEncryptor.getEncryptedPassword(client.getPassword(), salt);
-                String encPasswordString = PasswordEncryptor.getStringFromByte(encryptedPassword);
-                String saltString = PasswordEncryptor.getStringFromByte(salt);
-                client.setPassword(encPasswordString);
-                client.setSalt(saltString);
-                client.setUuid(UUID.randomUUID());
-                return clientRepository.add(client);
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
-                e.getMessage();
-            }
+            byte[] salt = PasswordEncryptor.generateSalt();
+            byte[] encryptedPassword = PasswordEncryptor.getEncryptedPassword(client.getPassword(), salt);
+            String encPasswordString = PasswordEncryptor.getStringFromByte(encryptedPassword);
+            String saltString = PasswordEncryptor.getStringFromByte(salt);
+            client.setPassword(encPasswordString);
+            client.setSalt(saltString);
+            client.setUuid(UUID.randomUUID());
+            return clientRepository.add(client);
         }
         return false;
     }
 
     @Override
-    public ClientDto read(String login) {
+    public ClientDto read(String login) throws SQLException {
         Client client = null;
         client = clientRepository.read(login);
         if (client == null) {
@@ -52,22 +50,18 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public ClientDto authenticate(String login, String password) {
+    public boolean authenticate(String login, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeySpecException, SQLException {
         Client client = clientRepository.read(login);
         if (client == null) {
-            return null;
+            return false;
         } else {
-            try {
-                byte[] salt = PasswordEncryptor.getByteFromString(client.getSalt());
-                byte[] encryptedPassword = PasswordEncryptor.getByteFromString(client.getPassword());
-                if (PasswordEncryptor.authenticate(password, encryptedPassword, salt)){
-                    return ClientMapper.INSTANCE.toDto(client);
-                }
-            } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                e.getMessage();
+            byte[] salt = PasswordEncryptor.getByteFromString(client.getSalt());
+            byte[] encryptedPassword = PasswordEncryptor.getByteFromString(client.getPassword());
+            if (PasswordEncryptor.authenticate(password, encryptedPassword, salt)) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 }

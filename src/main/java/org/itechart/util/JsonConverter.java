@@ -13,23 +13,11 @@ public class JsonConverter {
         mapper.setDateFormat(df);
     }
 
-    public String toJson(Object value) {
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            e.getMessage();
-        }
-        return json;
+    public String toJson(Object value) throws JsonProcessingException {
+        return mapper.writeValueAsString(value);
     }
 
-    public <T> T toObject(String jsonString, Class<T> clazz) {
-        T t = null;
-        try {
-            t = mapper.readValue(jsonString, clazz);
-        } catch (JsonProcessingException e) {
-            e.getMessage();
-        }
-        return t;
+    public <T> T toObject(String jsonString, Class<T> clazz) throws JsonProcessingException {
+        return mapper.readValue(jsonString, clazz);
     }
 }

@@ -29,8 +29,8 @@ public class CarRepository implements ICarRepository{
 
             //Нужно ли обращатьс к базе для получения сохраненного объекта?
         } catch (SQLException e){
-            logger.warn(e.getMessage());
-            throw new SQLException(e);
+            logger.error(e.getMessage());
+            throw e;
         }
         return car;
     }
@@ -53,8 +53,8 @@ public class CarRepository implements ICarRepository{
             car.setUuid(UUID.fromString(rs.getString("uuid")));
             rs.close();
         } catch (SQLException e) {
-            logger.warn(e.getMessage());
-            throw new SQLException(e);
+            logger.error(e.getMessage());
+            throw e;
         }
         return car;
     }
@@ -73,8 +73,8 @@ public class CarRepository implements ICarRepository{
                 list.add(car);
             }
         } catch (SQLException e) {
-            logger.warn(e.getMessage());
-            throw new SQLException(e);
+            logger.error(e.getMessage());
+            throw e;
         }
         return list;
     }
@@ -90,8 +90,8 @@ public class CarRepository implements ICarRepository{
             stmt.setObject(6, car.getUuid());
             stmt.execute();
         } catch (SQLException e) {
-            logger.warn(e.getMessage());
-            throw new SQLException(e);
+            logger.error(e.getMessage());
+            throw e;
         }
         return car;
     }
@@ -104,8 +104,8 @@ public class CarRepository implements ICarRepository{
                 return true;
             }
         } catch (SQLException e) {
-            logger.warn(e.getMessage());
-            throw new SQLException(e);
+            logger.error(e.getMessage());
+            throw e;
         }
         return false;
     }

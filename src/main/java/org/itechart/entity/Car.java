@@ -2,16 +2,24 @@ package org.itechart.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
 
+
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "cars")
 public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(nullable = false, unique = true)
     private UUID uuid;
     private String make;
     private String model;

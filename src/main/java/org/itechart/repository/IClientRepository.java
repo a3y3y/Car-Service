@@ -1,11 +1,8 @@
 package org.itechart.repository;
 
 import org.itechart.entity.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.SQLException;
+public interface IClientRepository extends JpaRepository<Client, Integer> {
 
-public interface IClientRepository {
-    boolean add(Client client) throws SQLException;
-    Client read(String login) throws SQLException;
-    boolean isLoginExist(String login) throws SQLException;
 }

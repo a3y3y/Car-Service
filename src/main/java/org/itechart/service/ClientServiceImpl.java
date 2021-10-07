@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -56,5 +57,11 @@ public class ClientServiceImpl implements ClientService, UserDetailsService {
     @Override
     public Client getByLogin(String login) {
         return clientRepository.findByLogin(login);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByLogin(String login) {
+        clientRepository.deleteByLogin(login);
     }
 }

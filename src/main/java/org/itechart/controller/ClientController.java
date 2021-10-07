@@ -27,4 +27,10 @@ public class ClientController {
         List<ClientDto> users = clientService.getAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{login}")
+    public ResponseEntity<?> delete(@PathVariable(name = "login") String login) {
+        clientService.deleteByLogin(login);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

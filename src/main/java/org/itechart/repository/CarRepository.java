@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ICarRepository extends JpaRepository<Car, Integer> {
+public interface CarRepository extends JpaRepository<Car, Integer> {
     Car findByUuid(UUID uuid);
-    List<Car> findAll();
     void deleteByUuid(UUID uuid);
 }

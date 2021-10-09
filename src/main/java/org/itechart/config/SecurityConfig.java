@@ -1,5 +1,6 @@
 package org.itechart.config;
 
+import org.itechart.filter.JwtFilter;
 import org.itechart.service.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,8 +9,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -18,7 +21,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthProvider authProvider;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -29,14 +36,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .httpBasic().disable()
                 .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("/clients", "/clients/*").permitAll()
+                .antMatchers("/clients", "/clients/*", "/auth").permitAll()
                 .antMatchers("/cars").hasAnyAuthority("USER")
-                .anyRequest().authenticated()
-                .and().formLogin()
-                .loginProcessingUrl("/login").permitAll()
-                .defaultSuccessUrl("/cars").failureUrl("/login?auth=failure").permitAll();
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

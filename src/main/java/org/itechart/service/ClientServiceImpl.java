@@ -31,14 +31,13 @@ public class ClientServiceImpl implements ClientService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Client client = clientRepository.findByLogin(login);
-        if(client != null){
+        if (client != null) {
             return client;
         } else throw new UsernameNotFoundException("Client " + login + " doesn't exist");
     }
 
 
-
-    public ClientDto add(ClientDto clientDto){
+    public ClientDto add(ClientDto clientDto) {
         Client client = clientMapper.toEntity(clientDto);
         client.setUuid(UUID.randomUUID());
         client.setPassword(passwordEncoder.encode(client.getPassword()));
@@ -57,6 +56,17 @@ public class ClientServiceImpl implements ClientService, UserDetailsService {
     @Override
     public Client getByLogin(String login) {
         return clientRepository.findByLogin(login);
+    }
+
+    @Override
+    public Client getByLoginAndPassword(String login, String password) {
+        Client client = clientRepository.findByLogin(login);
+        if (client != null) {
+            if (passwordEncoder.matches(password, client.getPassword())) {
+                return client;
+            }
+        }
+        return null;
     }
 
     @Override

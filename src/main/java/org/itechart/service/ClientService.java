@@ -9,5 +9,6 @@ public interface ClientService {
     ClientDto add(ClientDto client);
     List<ClientDto> getAll();
     Client getByLogin(String login);
+    Client getByLoginAndPassword(String login, String password);
     void deleteByLogin(String login);
 }

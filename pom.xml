@@ -12,6 +12,7 @@
 	<artifactId>car-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>car-service</name>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java.version>11</java.version>
@@ -71,6 +72,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>car-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

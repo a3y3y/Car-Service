@@ -19,7 +19,7 @@ public class JwtProvider {
     public String generateToken(String login) {
         return Jwts.builder()
                 .setSubject(login)
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(1))))
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(15))))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }

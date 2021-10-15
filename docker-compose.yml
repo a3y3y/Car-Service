@@ -1,21 +1,22 @@
 version: '3.1'
 services:
-  API:
-    image: 'car-service.jar'
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      PostgreSQL:
+      db:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://PostgreSQL:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/car-service
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_PROFILES_ACTIVE=docker
 
-  PostgreSQL:
+  db:
     image: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - dockerpgdata:/var/lib/postgresql/data
     environment:

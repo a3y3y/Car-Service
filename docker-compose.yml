@@ -1,9 +1,7 @@
 version: '3.1'
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: web-service/
     ports:
       - "8080:8080"
     depends_on:
@@ -30,3 +28,5 @@ services:
       retries: 5
 volumes:
   dockerpgdata:
+
+

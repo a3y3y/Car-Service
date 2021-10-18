@@ -1,6 +1,7 @@
 package org.itechart.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.itechart.dto.CardDto;
 import org.itechart.dto.OrderDto;
 import org.itechart.service.OrderService;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+@Log
 public class OrderController {
 
     private final OrderService orderService;
@@ -23,9 +25,17 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto> add(@RequestBody OrderDto orderDto) {
         CardDto card = orderDto.getCard();
-        card.setOrderUuid(orderDto.getUuid());
-        amqpTemplate.convertAndSend("queue1", card);
         OrderDto newOrderDto = orderService.add(orderDto);
+        card.setOrderUuid(newOrderDto.getUuid());
+        String[] response = (String[]) amqpTemplate.convertSendAndReceive("queue1", card);
+        String orderStatus = response[0];
+        UUID orderUuid = UUID.fromString(response[1]);
+        OrderDto order = new OrderDto();
+        order.setUuid(orderUuid);
+        order.setStatus(orderStatus);
+        orderService.update(order);
+        log.info("Order status has been changed");
+
         return new ResponseEntity<>(newOrderDto, HttpStatus.CREATED);
     }
 

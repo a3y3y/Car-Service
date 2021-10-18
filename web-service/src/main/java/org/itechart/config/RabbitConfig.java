@@ -3,6 +3,7 @@ package org.itechart.config;
 import lombok.extern.java.Log;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Log
+@EnableRabbit
 @Configuration
 public class RabbitConfig {
 
@@ -24,8 +26,7 @@ public class RabbitConfig {
     @Bean
     public AmqpAdmin amqpAdmin() {
         AmqpAdmin amqpAdmin = new RabbitAdmin(connectionFactory());
-        amqpAdmin.declareQueue(new Queue("queue1", true));
-        amqpAdmin.declareQueue(new Queue("queue2", true));
+        amqpAdmin.declareQueue(new Queue("queue1"));
         return amqpAdmin;
     }
 
@@ -33,5 +34,6 @@ public class RabbitConfig {
     public RabbitTemplate rabbitTemplate() {
         return new RabbitTemplate(connectionFactory());
     }
+
 
 }

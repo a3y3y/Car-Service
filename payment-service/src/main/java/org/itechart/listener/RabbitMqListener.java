@@ -16,16 +16,14 @@ import org.springframework.stereotype.Component;
 public class RabbitMqListener {
 
     private final PaymentService paymentService;
-    private final AmqpTemplate amqpTemplate;
 
     @RabbitListener(queues = "queue1")
-    public void processQueue1(CardDto cardDto){
+    public String[] processQueue1(CardDto cardDto) throws InterruptedException {
         String[] message = new String[2];
         String orderStatus = paymentService.processPayment(cardDto);
         message[0] = orderStatus;
         message[1] = cardDto.getOrderUuid().toString();
-        log.info("Received from queue 1: " + cardDto.toString());
-
-        amqpTemplate.convertAndSend("queue2", message);
+        log.info("Received from queue 1: " + cardDto);
+        return message;
     }
 }

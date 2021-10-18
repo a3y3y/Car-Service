@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
 
     public String processPayment(CardDto card) {
-
         if (card.getCvvNumber() < 300) {
             return "Confirmed";
         } else {

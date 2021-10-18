@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderDto get(UUID uuid) {
-        return null;
+        return orderMapper.toDto(orderRepository.findByUuid(uuid));
     }
 
     @Override
@@ -53,12 +53,37 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderDto update(OrderDto orderDto) {
-        return null;
+        Order oldOrder = orderRepository.findByUuid(orderDto.getUuid());
+        Order newOrder = orderMapper.toEntity(orderDto);
+        updateValues(oldOrder, newOrder);
+        return orderMapper.toDto(orderRepository.save(newOrder));
     }
 
     @Override
     @Transactional
     public void delete(UUID uuid) {
         orderRepository.deleteByUuid(uuid);
+    }
+
+    private void updateValues(Order oldOrder, Order newOrder){
+        newOrder.setId(oldOrder.getId());
+        if(newOrder.getCar() == null){
+            newOrder.setCar(oldOrder.getCar());
+        }
+        if(newOrder.getClient() == null){
+            newOrder.setClient(oldOrder.getClient());
+        }
+        if(newOrder.getOrderDate() == null){
+            newOrder.setOrderDate(oldOrder.getOrderDate());
+        }
+        if(newOrder.getRentEnd() == null){
+            newOrder.setRentEnd(oldOrder.getRentEnd());
+        }
+        if(newOrder.getRentStart() == null){
+            newOrder.setRentStart(oldOrder.getRentStart());
+        }
+        if(newOrder.getStatus() == null){
+            newOrder.setStatus(oldOrder.getStatus());
+        }
     }
 }

@@ -27,15 +27,7 @@ public class OrderController {
         CardDto card = orderDto.getCard();
         OrderDto newOrderDto = orderService.add(orderDto);
         card.setOrderUuid(newOrderDto.getUuid());
-        String[] response = (String[]) amqpTemplate.convertSendAndReceive("queue1", card);
-        String orderStatus = response[0];
-        UUID orderUuid = UUID.fromString(response[1]);
-        OrderDto order = new OrderDto();
-        order.setUuid(orderUuid);
-        order.setStatus(orderStatus);
-        orderService.update(order);
-        log.info("Order status has been changed");
-
+        amqpTemplate.convertAndSend("queue1", card);
         return new ResponseEntity<>(newOrderDto, HttpStatus.CREATED);
     }
 

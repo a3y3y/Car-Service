@@ -35,5 +35,9 @@ public class RabbitConfig {
         return new RabbitTemplate(connectionFactory());
     }
 
+    @Bean
+    public Queue myQueue(){
+        return new Queue("queue2");
+    }
 
 }

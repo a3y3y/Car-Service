@@ -25,7 +25,9 @@ public class RabbitConfig {
 
     @Bean
     public AmqpAdmin amqpAdmin() {
-        return new RabbitAdmin(connectionFactory());
+        AmqpAdmin amqpAdmin = new RabbitAdmin(connectionFactory());
+        amqpAdmin.declareQueue(new Queue("queue2"));
+        return amqpAdmin;
     }
 
     @Bean

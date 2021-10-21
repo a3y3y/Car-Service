@@ -18,7 +18,6 @@ import java.util.Collection;
 public class AuthProvider implements AuthenticationProvider {
 
     private final ClientService clientService;
-
     private final PasswordEncoder passwordEncoder;
 
 

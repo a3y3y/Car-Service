@@ -26,7 +26,7 @@ public class ClientServiceImpl implements ClientService, UserDetailsService {
 
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {

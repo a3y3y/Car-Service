@@ -22,16 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthProvider authProvider;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtFilter jwtFilter;
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
-        return passwordEncoder;
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -41,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/clients", "/clients/*", "/auth","/orders").permitAll()
+                .antMatchers("/clients", "/clients/*", "/auth", "/orders").permitAll()
                 .antMatchers("/cars").hasAnyAuthority("USER")
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

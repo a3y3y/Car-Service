@@ -71,6 +71,11 @@ class CarControllerTest {
         mockMvc.perform(get("/cars/" + carDto.getUuid().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.model", Matchers.is("Jetta")));
+
+        when(carService.get(isA(UUID.class))).thenReturn(null);
+
+        mockMvc.perform(get("/cars/" + carDto.getUuid().toString()))
+                .andExpect(status().isNotFound());
     }
 
     @Test

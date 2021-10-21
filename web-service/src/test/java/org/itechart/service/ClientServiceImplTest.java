@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
@@ -25,6 +27,8 @@ class ClientServiceImplTest {
     ClientRepository clientRepository;
     @MockBean
     PasswordEncoder passwordEncoder;
+    @Autowired
+    ClientServiceImpl clientServiceImpl;
 
     Client client = new Client();
     ClientDto clientDto = new ClientDto();
@@ -46,7 +50,11 @@ class ClientServiceImplTest {
     void loadUserByUsername() {
         when(clientRepository.findByLogin(isA(String.class))).thenReturn(client);
 
-        assertEquals(clientService.getByLogin("test"), client);
+        assertEquals(clientServiceImpl.loadUserByUsername("test"), client);
+
+        when(clientRepository.findByLogin(isA(String.class))).thenReturn(null);
+
+        assertThrows(UsernameNotFoundException.class, () -> clientServiceImpl.loadUserByUsername("test"));
     }
 
     @Test
@@ -76,8 +84,10 @@ class ClientServiceImplTest {
         when(clientRepository.findByLogin("test")).thenReturn(client);
         when(passwordEncoder.matches(isA(String.class), isA(String.class))).thenReturn(true);
 
-
         assertEquals(clientService.getByLoginAndPassword("test", "test"), client);
+
+        when(clientRepository.findByLogin("test")).thenReturn(null);
+        assertEquals(clientService.getByLoginAndPassword("test", "test"), null);
     }
 
     @Test

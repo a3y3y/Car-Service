@@ -69,6 +69,15 @@ class CarServiceImplTest {
         when(carRepository.findByUuid(isA(UUID.class))).thenReturn(car);
 
         assertEquals(carService.update(carDto), carDto);
+
+        Car car1 = new Car();
+        CarDto carDto1 = new CarDto();
+        carDto1.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
+        car1.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
+        when(carRepository.save(isA(Car.class))).thenReturn(car1);
+        when(carRepository.findByUuid(isA(UUID.class))).thenReturn(car1);
+
+        assertEquals(carService.update(carDto1), carDto1);
     }
 
     @Test

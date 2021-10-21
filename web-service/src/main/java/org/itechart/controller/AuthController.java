@@ -6,6 +6,8 @@ import org.itechart.controller.pojo.AuthRequest;
 import org.itechart.controller.pojo.AuthResponse;
 import org.itechart.entity.Client;
 import org.itechart.service.ClientService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +21,11 @@ public class AuthController {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/auth")
-    public AuthResponse auth(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> auth(@RequestBody AuthRequest request) {
         Client client = clientService.getByLoginAndPassword(request.getLogin(), request.getPassword());
-        String token = jwtProvider.generateToken(client.getLogin());
-        return new AuthResponse(token);
+        return client!=null
+            ? new ResponseEntity<>(new AuthResponse(jwtProvider.generateToken(client.getLogin())), HttpStatus.OK)
+            : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 }

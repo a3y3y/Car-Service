@@ -75,6 +75,12 @@ class OrderControllerTest {
         mockMvc.perform(get("/orders/" + order.getUuid().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", Matchers.is("test")));
+
+        when(orderService.get(isA(UUID.class))).thenReturn(null);
+
+        mockMvc.perform(get("/orders/" + order.getUuid().toString()))
+                .andExpect(status().isNotFound());
+
     }
 
     @Test

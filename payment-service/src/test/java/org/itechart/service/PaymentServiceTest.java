@@ -24,4 +24,12 @@ class PaymentServiceTest {
 
         Assertions.assertEquals("Confirmed", result);
     }
+
+    @Test
+    void processPaymentDenied() {
+        card.setCvvNumber(301);
+        String result = paymentService.processPayment(card);
+
+        Assertions.assertEquals("Payment denied", result);
+    }
 }

@@ -25,10 +25,10 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto> add(@RequestBody OrderDto orderDto) {
         CardDto card = orderDto.getCard();
-        if (card == null || orderDto.getCar() == null || orderDto.getClient() == null) {
+        OrderDto newOrderDto = orderService.add(orderDto);
+        if (card == null || orderDto.getCar() == null || orderDto.getClient() == null || newOrderDto ==null) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         } else {
-            OrderDto newOrderDto = orderService.add(orderDto);
             card.setOrderUuid(newOrderDto.getUuid());
             amqpTemplate.convertAndSend("queue1", card);
             return new ResponseEntity<>(newOrderDto, HttpStatus.CREATED);

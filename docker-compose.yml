@@ -11,11 +11,14 @@ services:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST}
 
   payment:
     build: payment-service/
     depends_on:
       - web
+    environment:
+      - SPRING_RABBITMQ_HOST=${SPRING_RABBITMQ_HOST}
 
   rabbitmq:
     image: rabbitmq

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
@@ -29,12 +29,16 @@ public class OrderServiceImpl implements OrderService{
     public OrderDto add(OrderDto orderDto) {
         Client client = clientRepository.findByUuid(orderDto.getClient().getUuid());
         Car car = carRepository.findByUuid(orderDto.getCar().getUuid());
-        Order order = orderMapper.toEntity(orderDto);
-        order.setUuid(UUID.randomUUID());
-        order.setStatus("Processing payment");
-        order.setCar(car);
-        order.setClient(client);
-        return orderMapper.toDto(orderRepository.save(order));
+        if (client == null || car == null) {
+            return null;
+        } else {
+            Order order = orderMapper.toEntity(orderDto);
+            order.setUuid(UUID.randomUUID());
+            order.setStatus("Processing payment");
+            order.setCar(car);
+            order.setClient(client);
+            return orderMapper.toDto(orderRepository.save(order));
+        }
     }
 
     @Override
@@ -62,24 +66,24 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.deleteByUuid(uuid);
     }
 
-    private void updateValues(Order oldOrder, Order newOrder){
+    private void updateValues(Order oldOrder, Order newOrder) {
         newOrder.setId(oldOrder.getId());
-        if(newOrder.getCar() == null){
+        if (newOrder.getCar() == null) {
             newOrder.setCar(oldOrder.getCar());
         }
-        if(newOrder.getClient() == null){
+        if (newOrder.getClient() == null) {
             newOrder.setClient(oldOrder.getClient());
         }
-        if(newOrder.getOrderDate() == null){
+        if (newOrder.getOrderDate() == null) {
             newOrder.setOrderDate(oldOrder.getOrderDate());
         }
-        if(newOrder.getRentEnd() == null){
+        if (newOrder.getRentEnd() == null) {
             newOrder.setRentEnd(oldOrder.getRentEnd());
         }
-        if(newOrder.getRentStart() == null){
+        if (newOrder.getRentStart() == null) {
             newOrder.setRentStart(oldOrder.getRentStart());
         }
-        if(newOrder.getStatus() == null){
+        if (newOrder.getStatus() == null) {
             newOrder.setStatus(oldOrder.getStatus());
         }
     }

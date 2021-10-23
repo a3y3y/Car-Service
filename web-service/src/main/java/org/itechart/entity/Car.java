@@ -1,8 +1,6 @@
 package org.itechart.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 import javax.persistence.*;
@@ -10,7 +8,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

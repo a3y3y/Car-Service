@@ -1,13 +1,15 @@
 package org.itechart.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -25,8 +27,8 @@ public class Order {
     private Date rentStart;
     @Column(name = "rent_end")
     private Date rentEnd;
-    @Column(name = "order_date")
-    private Date orderDate = Date.valueOf(LocalDate.now());
+    @Column(name = "order_date", insertable = false, updatable = false)
+    private Date orderDate;
     private String status;
 
 }

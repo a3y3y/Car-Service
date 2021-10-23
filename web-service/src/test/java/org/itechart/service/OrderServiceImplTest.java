@@ -3,15 +3,16 @@ package org.itechart.service;
 import org.itechart.dto.CarDto;
 import org.itechart.dto.ClientDto;
 import org.itechart.dto.OrderDto;
+import org.itechart.entity.Car;
+import org.itechart.entity.Client;
 import org.itechart.entity.Order;
+import org.itechart.repository.CarRepository;
+import org.itechart.repository.ClientRepository;
 import org.itechart.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +26,12 @@ class OrderServiceImplTest {
 
     @Autowired
     OrderService orderService;
-    @MockBean
+    @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    CarRepository carRepository;
+    @Autowired
+    ClientRepository clientRepository;
 
     Order order = new Order();
     OrderDto orderDto = new OrderDto();
@@ -35,7 +40,6 @@ class OrderServiceImplTest {
     {
         order.setStatus("test");
         order.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
-        orderDto.setOrderDate(Date.valueOf(LocalDate.now()));
         orderDto.setStatus("test");
         orderDto.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
         orders.add(order);
@@ -43,34 +47,36 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void add() {
+    void addTest() {
         CarDto car = new CarDto();
         car.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
         ClientDto client = new ClientDto();
         client.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
         orderDto.setCar(car);
         orderDto.setClient(client);
+        when(clientRepository.findByUuid(isA(UUID.class))).thenReturn(new Client());
+        when(carRepository.findByUuid(isA(UUID.class))).thenReturn(new Car());
         orderService.add(orderDto);
 
         verify(orderRepository, times(1)).save(isA(Order.class));
     }
 
     @Test
-    void get() {
+    void getTest() {
         when(orderRepository.findByUuid(order.getUuid())).thenReturn(order);
 
         assertEquals(orderService.get(order.getUuid()), orderDto);
     }
 
     @Test
-    void getAll() {
+    void getAllTest() {
         when(orderRepository.findAll()).thenReturn(orders);
 
         assertEquals(orderService.getAll(), orderDtos);
     }
 
     @Test
-    void update() {
+    void updateTest() {
         when(orderRepository.save(isA(Order.class))).thenReturn(order);
         when(orderRepository.findByUuid(isA(UUID.class))).thenReturn(order);
 
@@ -78,7 +84,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void deleteTest() {
         orderService.delete(orderDto.getUuid());
         verify(orderRepository, times(1)).deleteByUuid(isA(UUID.class));
     }

@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@SpringBootTest(classes = {ServiceTestConfig.class})
 class ClientServiceImplTest {
     @Autowired
     ClientService clientService;
-    @MockBean
+    @Autowired
     ClientRepository clientRepository;
     @MockBean
     PasswordEncoder passwordEncoder;

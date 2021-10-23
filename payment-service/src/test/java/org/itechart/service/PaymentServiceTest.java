@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import java.util.UUID;
+
+@SpringBootTest(classes = PaymentServiceTestConfig.class)
 class PaymentServiceTest {
 
     @Autowired
@@ -16,20 +18,23 @@ class PaymentServiceTest {
     {
         card.setCardNumber("1");
         card.setCvvNumber(200);
+        card.setOrderUuid(UUID.fromString("96a0437c-e9b3-4cc9-a870-8aabb4b938a0"));
     }
 
     @Test
-    void processPayment() {
-        String result = paymentService.processPayment(card);
+    void processPaymentConfirmedTest() throws InterruptedException {
+        String[] result = paymentService.processPayment(card);
 
-        Assertions.assertEquals("Confirmed", result);
+        Assertions.assertEquals("Confirmed", result[0]);
+        Assertions.assertEquals(card.getOrderUuid().toString(), result[1]);
     }
 
     @Test
-    void processPaymentDenied() {
+    void processPaymentDeniedTest() throws InterruptedException {
         card.setCvvNumber(301);
-        String result = paymentService.processPayment(card);
+        String[] result = paymentService.processPayment(card);
 
-        Assertions.assertEquals("Payment denied", result);
+        Assertions.assertEquals("Payment denied", result[0]);
+        Assertions.assertEquals(card.getOrderUuid().toString(), result[1]);
     }
 }

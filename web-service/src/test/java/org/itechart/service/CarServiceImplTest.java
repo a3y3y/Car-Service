@@ -17,13 +17,13 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 
-@SpringBootTest
+@SpringBootTest(classes = {ServiceTestConfig.class})
 class CarServiceImplTest {
 
     @Autowired
     CarService carService;
 
-    @MockBean
+    @Autowired
     CarRepository carRepository;
 
 

@@ -2,7 +2,9 @@ package org.itechart.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.itechart.dto.CarDto;
 import org.itechart.dto.CardDto;
+import org.itechart.dto.ClientDto;
 import org.itechart.dto.OrderDto;
 import org.itechart.service.OrderService;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,15 @@ class OrderControllerTest {
     void addTest() throws Exception {
         ObjectMapper om = new ObjectMapper();
         when(orderService.add(isA(OrderDto.class))).thenReturn(order);
+
+        mockMvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(order)).characterEncoding("utf-8"))
+                .andExpect(status().isNotAcceptable());
+
+        CarDto carDto = new CarDto();
+        ClientDto clientDto = new ClientDto();
+        order.setClient(clientDto);
+        order.setCar(carDto);
 
         mockMvc.perform(post("/orders").contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(order)).characterEncoding("utf-8"))

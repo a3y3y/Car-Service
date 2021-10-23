@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -25,7 +26,7 @@ public class Order {
     @Column(name = "rent_end")
     private Date rentEnd;
     @Column(name = "order_date")
-    private Date orderDate;
+    private Date orderDate = Date.valueOf(LocalDate.now());
     private String status;
 
 }

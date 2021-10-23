@@ -12,8 +12,6 @@ import org.itechart.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,12 +27,11 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderDto add(OrderDto orderDto) {
-        orderDto.setUuid(UUID.randomUUID());
-        orderDto.setOrderDate(Date.valueOf(LocalDate.now()));
-        orderDto.setStatus("Processing payment");
         Client client = clientRepository.findByUuid(orderDto.getClient().getUuid());
         Car car = carRepository.findByUuid(orderDto.getCar().getUuid());
         Order order = orderMapper.toEntity(orderDto);
+        order.setUuid(UUID.randomUUID());
+        order.setStatus("Processing payment");
         order.setCar(car);
         order.setClient(client);
         return orderMapper.toDto(orderRepository.save(order));

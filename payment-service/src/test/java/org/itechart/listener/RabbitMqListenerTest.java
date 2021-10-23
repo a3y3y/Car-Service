@@ -14,7 +14,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@SpringBootTest(classes = RabbitMqListenerTestConfig.class)
 class RabbitMqListenerTest {
 
     @MockBean
@@ -22,8 +22,8 @@ class RabbitMqListenerTest {
     @MockBean
     RabbitTemplate rabbitTemplate;
     @Autowired
-    @InjectMocks
     RabbitMqListener listener;
+
     CardDto card = new CardDto();
 
     {
@@ -34,7 +34,10 @@ class RabbitMqListenerTest {
 
     @Test
     void processQueue1() throws InterruptedException {
-        when(paymentService.processPayment(isA(CardDto.class))).thenReturn("Payment denied");
+        String[] message = new String[2];
+        message[0] = "Payment denied";
+        message[1] = card.getOrderUuid().toString();
+        when(paymentService.processPayment(isA(CardDto.class))).thenReturn(message);
         listener.processQueue1(card);
         verify(paymentService, times(1)).processPayment(card);
         verify(rabbitTemplate, times(1)).convertAndSend(eq("queue2"), isA(String[].class));

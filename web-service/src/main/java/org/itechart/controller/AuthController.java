@@ -2,8 +2,8 @@ package org.itechart.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.itechart.config.JwtProvider;
-import org.itechart.controller.pojo.AuthRequest;
-import org.itechart.controller.pojo.AuthResponse;
+import org.itechart.dto.AuthRequestDto;
+import org.itechart.dto.AuthResponseDto;
 import org.itechart.entity.Client;
 import org.itechart.service.ClientService;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ public class AuthController {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/auth")
-    public ResponseEntity<AuthResponse> auth(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponseDto> auth(@RequestBody AuthRequestDto request) {
         Client client = clientService.getByLoginAndPassword(request.getLogin(), request.getPassword());
         return client!=null
-            ? new ResponseEntity<>(new AuthResponse(jwtProvider.generateToken(client.getLogin())), HttpStatus.OK)
+            ? new ResponseEntity<>(new AuthResponseDto(jwtProvider.generateToken(client.getLogin())), HttpStatus.OK)
             : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
     }

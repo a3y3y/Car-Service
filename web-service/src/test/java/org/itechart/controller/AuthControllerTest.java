@@ -3,7 +3,7 @@ package org.itechart.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.itechart.config.JwtProvider;
-import org.itechart.controller.pojo.AuthRequest;
+import org.itechart.dto.AuthRequestDto;
 import org.itechart.entity.Client;
 import org.itechart.service.ClientService;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class AuthControllerTest {
     @Test
     void auth() throws Exception {
         ObjectMapper om = new ObjectMapper();
-        AuthRequest authRequest = new AuthRequest("test", "test");
+        AuthRequestDto authRequest = new AuthRequestDto("test", "test");
         Client client = new Client();
         client.setLogin("test");
         when(clientService.getByLoginAndPassword("test", "test")).thenReturn(client);

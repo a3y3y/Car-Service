@@ -2,12 +2,10 @@ package org.itechart.service;
 
 import org.itechart.entity.Client;
 import org.itechart.entity.Role;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,18 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = ServiceTestConfig.class)
 class AuthProviderTest {
 
     @Autowired
     AuthProvider authProvider;
-    @MockBean
+    @Autowired
     Authentication authentication;
-    @MockBean
+    @Autowired
     ClientServiceImpl clientService;
     @MockBean
     PasswordEncoder passwordEncoder;

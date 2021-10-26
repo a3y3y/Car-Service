@@ -5,13 +5,12 @@ import org.itechart.repository.CarRepository;
 import org.itechart.repository.ClientRepository;
 import org.itechart.repository.OrderRepository;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
+@TestConfiguration
 public class ServiceTestConfig {
 
     @Bean
@@ -24,10 +23,6 @@ public class ServiceTestConfig {
         return new CarMapperImpl();
     }
 
-    @Bean
-    public CarRepository carRepository(){
-        return Mockito.mock(CarRepository.class);
-    }
 
     @Bean
     public ClientService clientService(ClientRepository clientRepository,
@@ -41,16 +36,6 @@ public class ServiceTestConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(12);
-    }
-
-    @Bean
-    public ClientRepository clientRepository(){
-        return Mockito.mock(ClientRepository.class);
-    }
-
-    @Bean
     public OrderService orderService(OrderRepository orderRepository, CarRepository carRepository,
                                      ClientRepository clientRepository, OrderMapper orderMapper) {
         return new OrderServiceImpl(orderRepository, carRepository, clientRepository, orderMapper);
@@ -59,11 +44,6 @@ public class ServiceTestConfig {
     @Bean
     public OrderMapper orderMapper(){
         return new OrderMapperImpl();
-    }
-
-    @Bean
-    public OrderRepository orderRepository(){
-        return Mockito.mock(OrderRepository.class);
     }
 
     @Bean

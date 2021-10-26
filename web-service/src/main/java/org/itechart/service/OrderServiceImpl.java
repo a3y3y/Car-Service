@@ -1,6 +1,8 @@
 package org.itechart.service;
 
 import lombok.RequiredArgsConstructor;
+import org.itechart.dto.CarDto;
+import org.itechart.dto.ClientDto;
 import org.itechart.dto.OrderDto;
 import org.itechart.entity.Car;
 import org.itechart.entity.Client;
@@ -27,18 +29,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto add(OrderDto orderDto) {
-        Client client = clientRepository.findByUuid(orderDto.getClient().getUuid());
-        Car car = carRepository.findByUuid(orderDto.getCar().getUuid());
-        if (client == null || car == null) {
-            return null;
-        } else {
-            Order order = orderMapper.toEntity(orderDto);
-            order.setUuid(UUID.randomUUID());
-            order.setStatus("Processing payment");
-            order.setCar(car);
-            order.setClient(client);
-            return orderMapper.toDto(orderRepository.save(order));
+        if (isOrderCarAndClientNotNull(orderDto)) {
+            Client client = clientRepository.findByUuid(orderDto.getClient().getUuid());
+            Car car = carRepository.findByUuid(orderDto.getCar().getUuid());
+            if (client == null || car == null) {
+                return null;
+            } else {
+                Order order = orderMapper.toEntity(orderDto);
+                order.setUuid(UUID.randomUUID());
+                order.setStatus("Processing payment");
+                order.setCar(car);
+                order.setClient(client);
+                return orderMapper.toDto(orderRepository.save(order));
+            }
         }
+        return null;
     }
 
     @Override
@@ -86,5 +91,17 @@ public class OrderServiceImpl implements OrderService {
         if (newOrder.getStatus() == null) {
             newOrder.setStatus(oldOrder.getStatus());
         }
+    }
+
+    private boolean isOrderCarAndClientNotNull(OrderDto orderDto) {
+        CarDto cardto = orderDto.getCar();
+        ClientDto clientDto = orderDto.getClient();
+        if (cardto == null || clientDto == null) {
+            return false;
+        }
+        if (cardto.getUuid() == null || clientDto == null) {
+            return false;
+        }
+        return true;
     }
 }

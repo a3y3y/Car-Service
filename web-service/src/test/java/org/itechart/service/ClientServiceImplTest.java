@@ -2,98 +2,128 @@ package org.itechart.service;
 
 import org.itechart.dto.ClientDto;
 import org.itechart.entity.Client;
-import org.itechart.repository.ClientRepository;
+import org.itechart.entity.Role;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {ServiceTestConfig.class})
+@DataJpaTest
+@ActiveProfiles("test")
+@ContextConfiguration(classes = ServiceTestConfig.class)
 class ClientServiceImplTest {
+
+    private final UUID CLIENT_UUID = UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d5d");
+    private final String CLIENT_LOGIN = "test";
+    private final String CLIENT_PASSWORD = "test";
+
     @Autowired
     ClientService clientService;
     @Autowired
-    ClientRepository clientRepository;
-    @MockBean
-    PasswordEncoder passwordEncoder;
-    @Autowired
     ClientServiceImpl clientServiceImpl;
+    @Autowired
+    TestEntityManager entityManager;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-    Client client = new Client();
-    ClientDto clientDto = new ClientDto();
-    List<Client> clients = new ArrayList<>();
-    List<ClientDto> clientDtos = new ArrayList<>();
-
-    {
-        client.setLogin("test");
-        client.setPassword("test");
-        client.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
-        clientDto.setLogin("test");
-        clientDto.setPassword("test");
-        clientDto.setUuid(UUID.fromString("35c90465-de7e-4a78-9a6c-ee0577f30d3d"));
-        clients.add(client);
-        clientDtos.add(clientDto);
+    @BeforeEach
+    void saveClientToDatabase() {
+        Client client = newClient();
+        entityManager.persist(client);
     }
 
     @Test
-    void loadUserByUsername() {
-        when(clientRepository.findByLogin(isA(String.class))).thenReturn(client);
+    void loadUserByUsername_should_return_client_by_login() {
+        Client testClient = (Client) clientServiceImpl.loadUserByUsername("test");
 
-        assertEquals(clientServiceImpl.loadUserByUsername("test"), client);
+        assertEquals(CLIENT_UUID, testClient.getUuid());
+        assertEquals(CLIENT_LOGIN, testClient.getLogin());
+        assertTrue(passwordEncoder.matches(CLIENT_PASSWORD, testClient.getPassword()));
+    }
 
-        when(clientRepository.findByLogin(isA(String.class))).thenReturn(null);
+    @Test
+    void loadUserByUsername_should_throw_exception() {
+        entityManager.clear();
 
         assertThrows(UsernameNotFoundException.class, () -> clientServiceImpl.loadUserByUsername("test"));
     }
 
     @Test
-    void add() {
-        clientService.add(clientDto);
+    void add_should_save_client() {
+        entityManager.clear();
+        ClientDto clientDto = newClientDto();
 
-        verify(clientRepository, times(1)).save(isA(Client.class));
+        ClientDto testClient = clientService.add(clientDto);
+
+        assertNotNull(clientService.getByLogin(testClient.getLogin()));
+        assertEquals(clientDto.getLogin(), testClient.getLogin());
+        assertTrue(passwordEncoder.matches("test", testClient.getPassword()));
     }
 
     @Test
-    void getAll() {
-        when(clientRepository.findAll()).thenReturn(clients);
-
-        assertEquals(clientService.getAll(), clientDtos);
+    void getAll_should_return_all_clients() {
+        assertThat(clientService.getAll()).hasSize(1);
     }
 
     @Test
-    void getByLogin() {
-        when(clientRepository.findByLogin("test")).thenReturn(client);
+    void getByLogin_should_return_client_by_login() {
+        Client testClient = clientService.getByLogin("test");
 
-        assertEquals(clientService.getByLogin("test"), client);
+        assertEquals(CLIENT_UUID, testClient.getUuid());
+        assertEquals(CLIENT_LOGIN, testClient.getLogin());
+        assertTrue(passwordEncoder.matches(CLIENT_PASSWORD, testClient.getPassword()));
     }
 
     @Test
-    void getByLoginAndPassword() {
-        client.setPassword("test");
-        when(clientRepository.findByLogin("test")).thenReturn(client);
-        when(passwordEncoder.matches(isA(String.class), isA(String.class))).thenReturn(true);
+    void getByLoginAndPassword_should_return_client_by_login_and_password() {
+        Client testClient = clientService.getByLoginAndPassword("test", "test");
 
-        assertEquals(clientService.getByLoginAndPassword("test", "test"), client);
-
-        when(clientRepository.findByLogin("test")).thenReturn(null);
-        assertEquals(clientService.getByLoginAndPassword("test", "test"), null);
+        assertEquals(CLIENT_UUID, testClient.getUuid());
+        assertEquals(CLIENT_LOGIN, testClient.getLogin());
+        assertTrue(passwordEncoder.matches(CLIENT_PASSWORD, testClient.getPassword()));
     }
 
     @Test
-    void deleteByLogin() {
+    void getByLoginAndPassword_should_return_null() {
+        entityManager.clear();
+        Client testClient = clientService.getByLoginAndPassword("test", "test");
+
+        assertNull(testClient);
+    }
+
+    @Test
+    void deleteByLogin_should_delete_client_by_login() {
         clientService.deleteByLogin("test");
+        assertNull(clientService.getByLogin("test"));
+    }
 
-        verify(clientRepository, times(1)).deleteByLogin("test");
+    private Client newClient() {
+        Client client = new Client();
+        client.setUuid(CLIENT_UUID);
+        client.setLogin(CLIENT_LOGIN);
+        client.setPassword(passwordEncoder.encode(CLIENT_PASSWORD));
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.USER);
+        client.setRoles(roles);
+        return client;
+    }
+
+    private ClientDto newClientDto() {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setLogin(CLIENT_LOGIN);
+        clientDto.setPassword(CLIENT_PASSWORD);
+        return clientDto;
     }
 }

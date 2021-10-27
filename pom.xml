@@ -24,6 +24,9 @@
         <mapstruct>1.4.2.Final</mapstruct>
         <maven.compiler.plugin>3.6.2</maven.compiler.plugin>
         <jjwt>0.9.1</jjwt>
+        <graphql.spring.boot.starter>5.0.2</graphql.spring.boot.starter>
+        <graphiql.spring.boot.starter>5.0.2</graphiql.spring.boot.starter>
+        <graphql.java.tools>5.2.4</graphql.java.tools>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +40,21 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphql-spring-boot-starter</artifactId>
+                <version>${graphql.spring.boot.starter}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphql-java-tools</artifactId>
+                <version>${graphql.java.tools}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphiql-spring-boot-starter</artifactId>
+                <version>${graphiql.spring.boot.starter}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

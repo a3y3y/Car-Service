@@ -1,0 +1,12 @@
+
+type CarDto {
+uuid: String!
+make: String
+model: String
+bodyType: String
+color: String
+productionDate: String
+}
+type Query {
+cars:[CarDto]
+}

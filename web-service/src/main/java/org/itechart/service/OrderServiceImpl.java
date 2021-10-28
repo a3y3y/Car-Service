@@ -28,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
 
     @Override
+    @Transactional
     public OrderDto add(OrderDto orderDto) {
         if (isOrderCarAndClientNotNull(orderDto)) {
             Client client = clientRepository.findByUuid(orderDto.getClient().getUuid());
@@ -58,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDto update(OrderDto orderDto) {
         Order oldOrder = orderRepository.findByUuid(orderDto.getUuid());
         Order newOrder = orderMapper.toEntity(orderDto);

@@ -1,4 +1,3 @@
-
 type CarDto {
 uuid: String!
 make: String
@@ -7,6 +6,39 @@ bodyType: String
 color: String
 productionDate: String
 }
+
+type ClientDto {
+uuid: String!
+login: String!
+password: String!
+}
+
+type OrderDto {
+uuid: String!
+client: ClientDto!
+car: CarDto!
+rentStart: String
+rentEnd: String
+orderDate: String
+status: String
+}
+
 type Query {
 cars:[CarDto]
+clients: [ClientDto]
+orders: [OrderDto]
+car(uuid: String): CarDto
+order(uuid: String): OrderDto
+}
+
+type Mutation {
+createCar(make: String, model: String, bodyType: String, color: String, productionDate: String): CarDto
+deleteCar(uuid: String!): String
+createClient(login: String, password: String): ClientDto
+deleteClient(uuid: String!): String
+createOrder(clientUuid: String, carUuid: String, rentStart: String, rentEnd: String,
+cardNumber: String!, cvvNumber: String!, expireDate: String!): OrderDto
+deleteOrder(uuid: String!): String
+updateCar(uuid: String, make: String, model: String, bodyType: String, color: String, productionDate: String): CarDto
+updateOrder(uuid: String, rentStart: String, rentEnd: String): OrderDto
 }
